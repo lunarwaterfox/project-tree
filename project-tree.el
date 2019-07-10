@@ -1,11 +1,5 @@
-(defgroup project-tree nil
-  "Support a project tree side bar."
-  :group 'environment)
 
-(defcustom project-tree-buffer-name "*project-tree*"
-  "Project tree buffer name."
-  :type 'string
-  :group 'project-tree)
+
 
 (defcustom project-tree-home-key 'project-tree
   "Project tree buffer name."
@@ -122,12 +116,6 @@
     (delete-window project-tree-side-window)
     (setq project-tree-side-window nil)))
 
-(defun project-tree-trigger-side-bar ()
-  "Trigger project side bar."
-  (interactive)
-  (if project-tree-side-window
-      (project-tree-close-side-bar)
-    (project-tree-show-side-bar)))
 
 (defun project-tree-change-home-dir ()
   "Trigger project side bar."
@@ -162,8 +150,8 @@
 
 (defvar project-tree-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map "\C-ct" 'project-tree-trigger-side-bar)
-    (define-key map "\C-cc" 'project-tree-change-home-dir)
+    (define-key map "\C-xt" 'project-tree-toggle)
+    (define-key map "\C-xc" 'project-tree-change-home-dir)
     map))
 
 (define-minor-mode project-tree-minor-mode
@@ -180,5 +168,41 @@
   (project-tree-minor-mode))
 
 (define-globalized-minor-mode project-tree-global-mode project-tree-minor-mode project-tree-minor-mode-on)
+
+
+
+
+
+
+;; customization
+(defgroup project-tree nil
+  "Support a project tree side bar."
+  :group 'environment)
+
+(defcustom project-tree-buffer-name "*project-tree*"
+  "Project tree buffer name."
+  :type 'string
+  :group 'project-tree)
+
+;; variables
+(defvar project-tree-buffer nil
+  "Project tree buffer.")
+
+(defvar project-tree-window nil
+  "Project tree window.")
+
+;; utilise functions
+(defun project-tree-exist-p ()
+  "Return `not-nil' if `project-tree' exist."
+  (and (buffer-live-p project-tree-buffer)
+       (window-live-p project-tree-window)))
+
+;; interactive
+(defun project-tree-toggle ()
+  "Toggle project side bar."
+  (interactive)
+  (if (project-tree-exist-p)
+      (project-tree-close)
+    (project-tree-show)))
 
 (provide 'project-tree)
