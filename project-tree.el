@@ -39,7 +39,19 @@
   "Querry project tree home director."
   (read-directory-name "Setup home directory: " default-directory nil t))
 
-
+(defun project-tree-node-lessp (node1 node2)
+  "Project tree node sort function"
+  (let ((node1-name (car node1))
+        (node1-is-dir (plist-get (cdr node1) 'is-dir))
+        (node2-name (car node2))
+        (node2-is-dir (plist-get (cdr node2) 'is-dir)))
+    (cond ((and node1-is-dir (not node2-is-dir))
+           t)
+          ((and node2-is-dir (not node1-is-dir))
+           nil)
+          (t
+           (string< node1-name node2-name)))))
+    
 
 
 (defun project-tree-get-file-property (dir file)
@@ -53,7 +65,7 @@
         (struc-list ()))
     (dolist (file files)
       (push (project-tree-get-file-property dir file) struc-list))
-    struc-list))
+    (sort struc-list 'project-tree-node-lessp)))
 
 (defun project-tree-update ()
   "Update project tree."
